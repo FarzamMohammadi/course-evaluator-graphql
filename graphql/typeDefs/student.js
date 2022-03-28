@@ -1,15 +1,6 @@
 const { gql } = require('apollo-server-express');
 
-const typeDefs = gql`
-  type Course {
-    _id: ID
-    code: String!
-    name: String!
-    section: String
-    semester: String
-    attendees: [Student]
-  }
-
+const course = gql`
   type Student {
     _id: ID
     studentNumber: String!
@@ -41,4 +32,4 @@ const typeDefs = gql`
   }
 `;
 
-module.exports = typeDefs;
+module.exports = course;
