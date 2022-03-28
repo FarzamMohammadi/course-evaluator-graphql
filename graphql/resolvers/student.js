@@ -55,7 +55,12 @@ const student = {
         student.password = await bcrypt.hash(password, salt);
 
         await student.save();
-        return student;
+        const payload = {
+          student: {
+            id: student.id,
+          },
+        };
+        return jwt.sign(payload, config.get('jwtSecret'), { expiresIn: 3600 });
       } catch (error) {
         throw new Error(error.message);
       }
