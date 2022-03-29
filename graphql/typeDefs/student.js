@@ -11,6 +11,7 @@ const course = gql`
     city: String
     email: String!
     program: String
+    phoneNumber: String
   }
 
   type Query {
@@ -28,7 +29,8 @@ const course = gql`
       city: String
       email: String!
       program: String
-    ): Student!
+      phoneNumber: String
+    ): String!
   }
 `;
 

@@ -1,10 +1,13 @@
 import React, { useState, Component, Fragment } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { register } from '../../actions/auth';
 import './auth.css';
+
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import { REGISTER_STUDENT } from '../../queries/Student';
 
 export default function Register(props) {
   let navigate = useNavigate();
+  const [registerStudent, { loading }] = useMutation(REGISTER_STUDENT);
   const [formData, setFormData] = useState({
     studentNumber: '',
     fname: '',
@@ -31,14 +34,27 @@ export default function Register(props) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const registerPromise = await register(formData).then(function (
-      isRegistered
-    ) {
-      if (isRegistered) {
+    registerStudent({
+      variables: {
+        studentNumber,
+        fname,
+        lname,
+        address,
+        city,
+        phoneNumber,
+        program,
+        password,
+        email,
+      },
+    })
+      .then((res) => {
+        console.log(res);
         alert('Account Created!');
         navigate('/');
-      }
-    });
+      })
+      .catch((err) => {
+        alert('Could not register');
+      });
   }
 
   const onChange = (e) =>
@@ -52,7 +68,7 @@ export default function Register(props) {
       <section className='container'>
         <h1 className='large text-primary'>Sign Up</h1>
         <p className='lead'>
-          <i className='fas fa-user'></i> Log into Your Account
+          <i className='fas fa-user'></i> Register Your Account
         </p>
         <form className='form' onSubmit={(e) => handleSubmit(e)}>
           <div className='form-group'>

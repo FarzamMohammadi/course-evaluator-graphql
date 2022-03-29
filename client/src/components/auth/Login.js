@@ -1,10 +1,14 @@
 import React, { useState, Component, Fragment } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { login } from '../../actions/auth';
+import setAuthToken from '../../utils/setAuthToken';
 import './auth.css';
+
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import { LOGIN_USER } from '../../queries/Auth';
 
 export default function Login(props) {
   let navigate = useNavigate();
+  const [loginUser, { loading }] = useMutation(LOGIN_USER);
   const [formData, setFormData] = useState({
     password: '',
     email: '',
@@ -14,13 +18,21 @@ export default function Login(props) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const loginPromise = await login(formData).then(function (token) {
-      if (token) {
+    localStorage.removeItem('token');
+    loginUser({
+      variables: { email, password },
+    })
+      .then((res) => {
+        const token = res.data.loginUser;
+        localStorage.setItem('token', token);
+        setAuthToken(token);
         props.onIsAuthChange(true);
         props.onTokenChange(token);
         navigate('/course');
-      }
-    });
+      })
+      .catch((err) => {
+        alert('Could not log in');
+      });
   }
 
   const onChange = (e) =>

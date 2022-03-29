@@ -1,7 +1,9 @@
 const Student = require('../../models/Student');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const config = require('config');
 
-const student = {
+module.exports = {
   Query: {
     getAllStudents: async () => {
       try {
@@ -22,7 +24,7 @@ const student = {
     createStudent: async (root, args, context, info) => {
       try {
         let studentExists = await Student.findOne({ email: args.email });
-
+        console.log(studentExists);
         if (studentExists) {
           throw new Error('Student already exits');
         }
@@ -53,7 +55,6 @@ const student = {
         const salt = await bcrypt.genSalt(10);
 
         student.password = await bcrypt.hash(password, salt);
-
         await student.save();
         const payload = {
           student: {
@@ -67,5 +68,3 @@ const student = {
     },
   },
 };
-
-module.exports = student;
